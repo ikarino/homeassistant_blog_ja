@@ -12,40 +12,68 @@ image:
 
 以下のステップで Home Assistant を使えるようにしていきます。
 
-1. [Home Assistant インストールに必要なものと環境について](/homeassistant_1)
-2. **[Raspberry Pi OS のインストールとセットアップについて(本記事)](/homeassistant_2)**
+1. [必要なものと環境](/homeassistant_1)
+2. **[Raspberry Pi OS のセットアップ(本記事)](/homeassistant_2)**
 3. [Home Assistant のインストール](/homeassistant_3)
 4. [Addon のインストール](/homeassistant_4)
 
-# OS のクリーンインストール
+# 必要なものの確認
+
+[前回](/homeassistant_1)で紹介した必要なものがそろっているか確認してください。  
+表の「私の場合」を例に紹介してまいります。
+
+| ハードウェア等 | 私の場合                     |
+| :------------- | :--------------------------- |
+| Raspberry Pi   | Raspberry Pi 4 (メモリ 2GB)  |
+| micro SD       | SanDisk 製 32GB              |
+| 電源           | AC アダプタ                  |
+| 放熱ケース     | [前回](/homeassistant_1)参照 |
+| パソコン       | Mac                          |
+| 自宅 LAN       | 普通の Wifi ルータ、後述     |
+
+# Raspberry Pi OS のインストール
+
+ここでは micro SD カードに Raspberry Pi OS を書き込みます。
+
+> ちょっと前まで Raspberry Pi 用の OS として Raspbian という名前の Debian 系の Linux ディストリビューションがありましたが、`Raspberry Pi OS`その後継にあたります。
 
 ## microSD カードへの OS 書き込み
 
-iMac に SD カードを差し込んでインストールしました。
-前は OS のイメージを落として来て、書き込みソフトでインストールした覚えがありますが、今回は推奨されている`Raspberry Pi Imager`を使用しました。
+まずは、micro SD カードをパソコンにセットしておきます。
 
-デスクトップ用途はないので OS は`Raspbian`の`Lite`の方を選択しました。
+[公式のインストールツール`Raspberry Pi Imager`](https://www.raspberrypi.org/downloads/)を使って OS を書き込んでいきます。  
+非常に簡単に使えるようになっています。
 
-[https://www.raspberrypi.org/downloads/](https://www.raspberrypi.org/downloads/)
+インストールしたい OS を選択し(`CHOOSE OS`)、SD カードを指定し(`CHOOSE SD CARD`)、書き込む(`WRITE`)するだけです。
+![top](../../assets/raspberry_pi_imager/0.png)
 
-## ヘッドレスインストールのための準備
+デスクトップ用途はないので OS は`Raspberry OS Lite(32-bit)`を選択しました。
+![choose_os](../../assets/raspberry_pi_imager/2.png)
 
-初回起動時に自動的に Wifi に接続させ、iMac から ssh 接続できるように、いくつか準備しました。
+SD カードをパソコンに差し込んだら表示されましたので、選択。
 
-`SSID`と`psk`は接続する Wifi の SSID とパスワードです。SSID は Mac のネットワーク設定で表示されているものと一言一句同じにしました。
+![choose_sd_card](../../assets/raspberry_pi_imager/3.png)
+
+## SSH の準備
+
+書き込みが終わると、micro SD カードの中に`/boot`というフォルダができあがります。  
+この中に空の`ssh`というファイルを作っておくことで、初回起動時に`ssh`接続できるようになります。
+
+以下は Mac OS の場合に`ssh`ファイルを作るコマンド
 
 ```bash
 touch /Volumes/boot/ssh
-echo 'country=JP
-ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev
-update_config=1
-network={
-    ssid="SSID"
-    psk="password"
-}' > /Volumes/boot/wpa_supplicant.conf
 ```
 
+以上で micro SD カードの準備は完了です。  
+お疲れさまでした。
+
 # Raspberry Pi の初期設定
+
+micro SD カードを Raspberry Pi に差し込み、AC アダプターを差します。  
+Raspberry Pi 本体に電源スイッチはありません。コンセントに差し込んだ瞬間起動します。
+
+数分で起動し、ssh 接続できるようになります。
 
 ## ssh で接続
 
@@ -65,7 +93,7 @@ ssh pi@raspberypi.local
 sudo rpi-update
 ```
 
-## `raspi-config`
+## raspi-config
 
 以下で起動します。
 
@@ -100,18 +128,6 @@ sudo apt-get purge -y --auto-remove dphys-swapfile
 sudo rm -fr /var/swap
 ```
 
-## Wifi の IP アドレスを固定
-
-`/etc/dhcpcd.conf`に追記します。  
-ヘッドレスなのでここでミスると接続できなくなり、やり直しです。慎重に。
-
-```bash:dhcpcd.conf
-interface wlan0
-static ip_address=192.168.0.230/24  # 指定する固定IPアドレス
-static routers=192.168.0.1          # ルータのアドレス
-static domain_name_servers=8.8.8.8  # DNSサーバ
-```
-
 ## root パスワードの変更
 
 ```bash
@@ -120,7 +136,7 @@ sudo passwd root
 
 ## ユーザの追加
 
-新しいユーザを追加します。  
+新しいユーザを追加します。`testuser`の部分は自分の設定するユーザ名に置き換えてください。  
 新しいユーザで ssh 接続可能なことを確認した上で、デフォルトの`pi`アカウントは消してしまいます。
 
 ```bash
@@ -130,32 +146,4 @@ $ sudo useradd testuser
 $ sudo usermod -G adm,dialout,cdrom,sudo,audio,video,plugdev,games,users,input,netdev,spi,i2c,gpio testuser # pi以外のグループを引継
 # ここで新しいアカウントでログインし直し、接続できることを確認
 $ sudo userdel pi
-```
-
-# HomeAssistant のインストール
-
-## Docker のインストール
-
-```
-# sudo su
-curl -sSL https://get.docker.com | sh
-```
-
-## 新しいユーザを docker グループに追加
-
-```
-usermod -aG docker testuser
-```
-
-##
-
-```bash
-mkdir config
-sudo docker run -d --name="home-assistant" -v ./config:/config -v /etc/localtime:/etc/localtime:ro --net=host homeassistant/home-assistant:stable
-```
-
-##
-
-```
-sudo apt-get -y install network-manager apparmor apparmor-utils apparmor-profiles jq
 ```

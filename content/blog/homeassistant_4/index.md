@@ -12,7 +12,7 @@ image:
 
 以下のステップで Home Assistant を使えるようにしていきます。
 
-1. [Home Assistant インストールに必要なものと環境について](/homeassistant_1)
-2. [Raspberry Pi OS のインストールとセットアップについて](/homeassistant_2)
+1. [必要なものと環境て](/homeassistant_1)
+2. [Raspberry Pi OS のセットアップ](/homeassistant_2)
 3. [Home Assistant のインストール](/homeassistant_3)
 4. **[Addon のインストール(本記事)](/homeassistant_4)**

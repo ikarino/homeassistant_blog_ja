@@ -28,7 +28,7 @@ image:
 それなりにステップを踏んで進めていく必要があるので、記事をいくつかに分けてまとめていきます。  
 まっさらな状態からスタートしますのでご安心ください。
 
-1. [Home Assistant インストールに必要なものと環境について](/homeassistant_1)
-2. [Raspberry Pi OS のインストールとセットアップについて](/homeassistant_2)
+1. [必要なものと環境](/homeassistant_1)
+2. [Raspberry Pi OS のセットアップ](/homeassistant_2)
 3. [Home Assistant のインストール](/homeassistant_3)
 4. [Addon のインストール](/homeassistant_4)

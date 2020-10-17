@@ -7,7 +7,7 @@ module.exports = {
       summary: `自動化大好き会社員`,
     },
     description: `A simple, fixed sidebar two columns Gatsby.js blog starter.`,
-    siteUrl: `https://renyuanz.github.io/leonids`,
+    siteUrl: `https://smartlife99.netlify.app/`,
     social: {
       twitter: `ikarino99`,
     },
