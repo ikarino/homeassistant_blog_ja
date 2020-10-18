@@ -1,87 +1,81 @@
+require(`dotenv`).config({
+  path: `.env`,
+});
+
+const shouldAnalyseBundle = process.env.ANALYSE_BUNDLE;
+
 module.exports = {
-  pathPrefix: "/leonids",
   siteMetadata: {
-    title: `Smart Life`,
-    author: {
-      name: `@ikarino99`,
-      summary: `自動化大好き会社員`,
-    },
-    description: `A simple, fixed sidebar two columns Gatsby.js blog starter.`,
-    siteUrl: `https://smartlife99.netlify.app/`,
-    social: {
-      twitter: `ikarino99`,
-    },
-    defaultImage: "images/bg.jpeg",
+    sitTitle: `Smart Life 99`,
+    siteTitleAlt: `Minimal Blog - Gatsby Theme`,
   },
   plugins: [
     {
-      resolve: `gatsby-source-filesystem`,
+      resolve: `@lekoarts/gatsby-theme-minimal-blog`,
+      // See the theme's README for all available options
       options: {
-        path: `${__dirname}/content/blog`,
-        name: `blog`,
-      },
-    },
-    {
-      resolve: `gatsby-source-filesystem`,
-      options: {
-        path: `${__dirname}/content/assets`,
-        name: `assets`,
-      },
-    },
-    {
-      resolve: `gatsby-transformer-remark`,
-      options: {
-        plugins: [
+        navigation: [
           {
-            resolve: `gatsby-remark-images`,
-            options: {
-              maxWidth: 590,
-            },
+            title: `Blog`,
+            slug: `/blog`,
           },
           {
-            resolve: `gatsby-remark-responsive-iframe`,
-            options: {
-              wrapperStyle: `margin-bottom: 1.0725rem`,
-            },
+            title: `About`,
+            slug: `/about`,
           },
-          `gatsby-remark-prismjs`,
-          `gatsby-remark-copy-linked-files`,
-          `gatsby-remark-smartypants`,
+        ],
+        externalLinks: [
+          {
+            name: `Twitter`,
+            url: `https://twitter.com/ikarino99`,
+          },
+          {
+            name: `Instagram`,
+            url: `https://www.instagram.com/lekoarts.de/`,
+          },
         ],
       },
     },
-    `gatsby-transformer-sharp`,
-    `gatsby-plugin-sharp`,
     {
       resolve: `gatsby-plugin-google-analytics`,
       options: {
-        trackingId: `UA-62251910-1`,
+        trackingId: process.env.GOOGLE_ANALYTICS_ID,
       },
     },
-    `gatsby-plugin-feed`,
+    `gatsby-plugin-sitemap`,
     {
       resolve: `gatsby-plugin-manifest`,
       options: {
-        name: `Ryz`,
-        short_name: `Ryz`,
+        name: `minimal-blog - @lekoarts/gatsby-theme-minimal-blog`,
+        short_name: `minimal-blog`,
+        description: `Typography driven, feature-rich blogging theme with minimal aesthetics. Includes tags/categories support and extensive features for code blocks such as live preview, line numbers, and code highlighting.`,
         start_url: `/`,
-        background_color: `#ffffff`,
-        theme_color: `#663399`,
-        display: `minimal-ui`,
-        icon: `content/assets/gatsby-icon.png`,
+        background_color: `#fff`,
+        theme_color: `#6B46C1`,
+        display: `standalone`,
+        icons: [
+          {
+            src: `/android-chrome-192x192.png`,
+            sizes: `192x192`,
+            type: `image/png`,
+          },
+          {
+            src: `/android-chrome-512x512.png`,
+            sizes: `512x512`,
+            type: `image/png`,
+          },
+        ],
       },
     },
-    `gatsby-plugin-react-helmet`,
-    {
-      resolve: `gatsby-plugin-typography`,
-      options: {
-        pathToConfigModule: `src/utils/typography`,
-      },
-    },
-    // this (optional) plugin enables Progressive Web App + Offline functionality
-    // To learn more, visit: https://gatsby.dev/offline
     `gatsby-plugin-offline`,
-    "gatsby-plugin-dark-mode",
-    `gatsby-plugin-postcss`,
-  ],
-}
+    `gatsby-plugin-netlify`,
+    shouldAnalyseBundle && {
+      resolve: `gatsby-plugin-webpack-bundle-analyser-v2`,
+      options: {
+        analyzerMode: `static`,
+        reportFilename: `_bundle.html`,
+        openAnalyzer: false,
+      },
+    },
+  ].filter(Boolean),
+};
