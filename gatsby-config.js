@@ -6,8 +6,14 @@ const shouldAnalyseBundle = process.env.ANALYSE_BUNDLE;
 
 module.exports = {
   siteMetadata: {
-    sitTitle: `Smart Life 99`,
-    siteTitleAlt: `Minimal Blog - Gatsby Theme`,
+    siteTitle: `Smart Life 99`,
+    siteTitleAlt: `Smart Life 99`,
+    siteHeadline: `スマートホームやライフハックについての情報を発信します`,
+    siteUrl: `https://smartlife99.netlify.app/`,
+    siteDescription: `自身の経験をもとにスマートホームやライフハックに関して得た情報を発信します`,
+    siteLanguage: `ja`,
+    // siteImage: `/banner.jpg`,
+    author: `@ikarino99`,
   },
   plugins: [
     {
@@ -29,10 +35,10 @@ module.exports = {
             name: `Twitter`,
             url: `https://twitter.com/ikarino99`,
           },
-          {
-            name: `Instagram`,
-            url: `https://www.instagram.com/lekoarts.de/`,
-          },
+          // {
+          //   name: `Instagram`,
+          //   url: `https://www.instagram.com/lekoarts.de/`,
+          // },
         ],
       },
     },

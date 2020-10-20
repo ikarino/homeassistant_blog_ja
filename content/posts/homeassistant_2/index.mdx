@@ -31,7 +31,7 @@ tags:
 
 ここでは micro SD カードに Raspberry Pi OS を書き込みます。
 
-> ちょっと前まで Raspberry Pi 用の OS として Raspbian という名前の Debian 系の Linux ディストリビューションがありましたが、`Raspberry Pi OS`その後継にあたります。
+> ちょっと前まで Raspberry Pi 用の OS として`Raspbian`という名前の Debian 系の Linux ディストリビューションがありましたが、`Raspberry Pi OS`はその後継にあたります。
 
 ### microSD カードへの OS 書き込み
 
@@ -40,7 +40,7 @@ tags:
 [公式のインストールツール`Raspberry Pi Imager`](https://www.raspberrypi.org/downloads/)を使って OS を書き込んでいきます。  
 非常に簡単に使えるようになっています。
 
-インストールしたい OS を選択し(`CHOOSE OS`)、SD カードを指定し(`CHOOSE SD CARD`)、書き込む(`WRITE`)するだけです。
+インストールしたい OS を選択し(`CHOOSE OS`)、SD カードを指定し(`CHOOSE SD CARD`)、書き込む(`WRITE`)だけです。
 ![top](./0.png)
 
 デスクトップ用途はないので OS は`Raspberry OS Lite(32-bit)`を選択しました。
@@ -66,12 +66,12 @@ touch /Volumes/boot/ssh
 
 ## Raspberry Pi の初期設定
 
-micro SD カードを Raspberry Pi に差し込み、AC アダプターを差します。  
+micro SD カードを Raspberry Pi に差し込み、LANケーブルとAC アダプターを差します。  
 Raspberry Pi 本体に電源スイッチはありません。コンセントに差し込んだ瞬間起動します。
 
 数分で ssh 接続できるようになります。
 
-### ssh で接続
+### ssh 接続
 
 Mac から ssh で接続します。  
 Mac ではデフォルトで Bonjour が有効です。IP アドレスを指定せず、`raspberrypi.local`にアクセスします。  
@@ -93,7 +93,7 @@ ssh pi@raspberypi.local
 有線 LAN のネットワーク設定を`/etc/dhcpcd.conf`に書き込みます。  
 以下は私の場合の一例です。
 
-```bash:dhcpcd.conf
+```:title=/etc/dhcpcd.conf
 # A sample configuration for dhcpcd.
 # See dhcpcd.conf(5) for details.
 ...
@@ -159,12 +159,16 @@ $ sudo passwd root
 新しいユーザを追加します。`testuser`の部分は自分の設定するユーザ名に置き換えてください。  
 新しいユーザで ssh 接続可能なことを確認した上で、デフォルトの`pi`アカウントは消してしまいます。
 
-```
+```bash
+# デフォルトアカウントのグループを確認
 $ groups pi
 pi : pi adm dialout cdrom sudo audio video plugdev games users input netdev spi i2c gpio
+# 新しいアカウントを追加
 $ sudo useradd testuser
-# pi以外のグループを引継
+# 新しいアカウントのパスワードを設定
+$ sudo passwd testuser
+# pi以外のグループをtestuserにそのまま引継ぎ
 $ sudo usermod -G adm,dialout,cdrom,sudo,audio,video,plugdev,games,users,input,netdev,spi,i2c,gpio testuser
-# ここで新しいアカウントでログインし直し、接続できることを確認
+# ここで新しいアカウントでログインし直し、接続できることを確認後、piユーザを削除
 $ sudo userdel pi
 ```

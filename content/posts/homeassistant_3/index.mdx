@@ -13,7 +13,7 @@ tags:
 3. **[Home Assistant のインストール](/home-assistantを使えるようにするまで-その-4)**
 4. [Addon のインストール](/home-assistantを使えるようにするまで-その-5)
 
-## HomeAssistant のインストール
+## Home　Assistant のインストール方法
 
 2020/10/17 現在、公式でサポートされている Home Assistant のインストール方法は 4 つあります。
 
@@ -29,37 +29,35 @@ tags:
 1.〜4.の違いの説明は少し込み入っています。  
 読み飛ばしてしまって全く問題ありません。
 
-|     |        OS         | add-on |
-| :-- | :---------------: | :----: |
-| 1.  | Home Assistant OS |  有り  |
-| 2.  |     指定なし      |  無し  |
-| 3.  |  指定なし(Linux)  |  有り  |
-| 4.  |     指定なし      |  無し  |
+![ha_architecture](https://developers.home-assistant.io/img/en/architecture/ha_architecture_2020.png)
+
+上図は1.のHome Assistantまたは3.のHome Assistant Supervisedの例です。  
+OS(Operating System)の部分に`Home Assistant OS`が使われるか、今回のように`Raspberry Pi OS`が使われるかの違いです。
+
+Home Assistant Coreの実体はPythonパッケージです。これを生のPythonで使うパターンを4.のHome Assistant Coreと呼んでいます。 一方、上図のようにDocker等に乗せてあるものを利用する方法を2.のHome Assistant Containerと呼んでいます。
+
+アドオンはHome Assistant Core の外にあるため、2.と4.ではアドオンがインストールできないことが分かると思います。
+
+## Home Assistant Supervisedのインストール
 
 ### 必要なパッケージのインストール
-
+インストールします。
 ```
 sudo apt-get -y install network-manager apparmor apparmor-utils apparmor-profiles jq
 ```
 
 ### Docker のインストール
-
+rootユーザになってからDockerをインストールします。
 ```
-# sudo su
+sudo su
 curl -sSL https://get.docker.com | sh
 ```
 
-### 新しいユーザを docker グループに追加
-
-```
-usermod -aG docker testuser
-```
-
-###
-
+### Home Assistant Supervisedのインストール
+こちらでインストールします。
+詳細は[こちら](https://github.com/home-assistant/supervised-installer)を参照してください。
 ```bash
-mkdir config
-sudo docker run -d --name="home-assistant" -v ./config:/config -v /etc/localtime:/etc/localtime:ro --net=host homeassistant/home-assistant:stable
+sudo su
+curl -Lo installer.sh https://raw.githubusercontent.com/home-assistant/supervised-installer/master/installer.sh
+bash installer.sh --machine raspberrypi4
 ```
-
-###
