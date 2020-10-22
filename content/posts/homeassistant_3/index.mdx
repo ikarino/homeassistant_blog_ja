@@ -9,11 +9,11 @@ tags:
 以下のステップで Home Assistant を使えるようにしていきます。
 
 1. [必要なものと環境](/home-assistantを使えるようにするまで-その-2)
-2. [Raspberry Pi OS のセットアップ(本記事)](/home-assistantを使えるようにするまで-その-3)
-3. **[Home Assistant のインストール](/home-assistantを使えるようにするまで-その-4)**
+2. [Raspberry Pi OS のセットアップ](/home-assistantを使えるようにするまで-その-3)
+3. **[Home Assistant のインストール(本記事)](/home-assistantを使えるようにするまで-その-4)**
 4. [Addon のインストール](/home-assistantを使えるようにするまで-その-5)
 
-## Home　Assistant のインストール方法
+## Home 　 Assistant のインストール方法
 
 2020/10/17 現在、公式でサポートされている Home Assistant のインストール方法は 4 つあります。
 
@@ -29,33 +29,43 @@ tags:
 1.〜4.の違いの説明は少し込み入っています。  
 読み飛ばしてしまって全く問題ありません。
 
-<img alt="ha_architecture" src="https://developers.home-assistant.io/img/en/architecture/ha_architecture_2020.png" width="100%" />
+<img
+  alt="ha_architecture"
+  src="https://developers.home-assistant.io/img/en/architecture/ha_architecture_2020.png"
+  width="100%"
+/>
 
-上図は1.のHome Assistantまたは3.のHome Assistant Supervisedの例です。  
+上図は 1.の Home Assistant または 3.の Home Assistant Supervised の例です。  
 OS(Operating System)の部分に`Home Assistant OS`が使われるか、今回のように`Raspberry Pi OS`が使われるかの違いです。
 
-Home Assistant Coreの実体はPythonパッケージです。これを生のPythonで使うパターンを4.のHome Assistant Coreと呼んでいます。 一方、上図のようにDocker等に乗せてあるものを利用する方法を2.のHome Assistant Containerと呼んでいます。
+Home Assistant Core の実体は Python パッケージです。これを生の Python で使うパターンを 4.の Home Assistant Core と呼んでいます。 一方、上図のように Docker 等に乗せてあるものを利用する方法を 2.の Home Assistant Container と呼んでいます。
 
-アドオンはHome Assistant Core の外にあるため、2.と4.ではアドオンがインストールできないことが分かると思います。
+アドオンは Home Assistant Core の外にあるため、2.と 4.ではアドオンがインストールできないことが分かると思います。
 
-## Home Assistant Supervisedのインストール
+## Home Assistant Supervised のインストール
 
 ### 必要なパッケージのインストール
+
 インストールします。
+
 ```
 sudo apt-get -y install network-manager apparmor apparmor-utils apparmor-profiles jq
 ```
 
 ### Docker のインストール
-rootユーザになってからDockerをインストールします。
+
+root ユーザになってから Docker をインストールします。
+
 ```
 sudo su
 curl -sSL https://get.docker.com | sh
 ```
 
-### Home Assistant Supervisedのインストール
+### Home Assistant Supervised のインストール
+
 こちらでインストールします。
 詳細は[こちら](https://github.com/home-assistant/supervised-installer)を参照してください。
+
 ```bash
 sudo su
 curl -Lo installer.sh https://raw.githubusercontent.com/home-assistant/supervised-installer/master/installer.sh
@@ -65,3 +75,65 @@ bash installer.sh --machine raspberrypi4
 以上で完了です。  
 勝手に起動します。
 
+初回起動には 15 分くらいかかりますので、その間にどのようにインストールされたか見ていきます。
+
+### 起動後の状態
+
+まずは docker の状態を確認してみます（事後確認ですみません）。
+
+```
+$ docker ps -a
+CONTAINER ID        IMAGE                                              COMMAND                  CREATED             STATUS              PORTS                  NAMES
+49289f1d4cc1        homeassistant/armv7-hassio-cli:2020.10.0           "/init /bin/bash -c …"   2 days ago          Up 2 days                                  hassio_cli
+1de9d6088db4        homeassistant/armv7-hassio-observer:2020.10.1      "/init"                  3 days ago          Up 3 days           0.0.0.0:4357->80/tcp   hassio_observer
+cbc32a5aa9b1        homeassistant/raspberrypi4-homeassistant:0.116.4   "/init"                  4 days ago          Up 3 days                                  homeassistant
+c538f21d5ac4        homeassistant/armv7-hassio-multicast:3             "/init"                  4 days ago          Up 4 days                                  hassio_multicast
+55359aa231b6        homeassistant/armv7-hassio-audio:17                "/init"                  4 days ago          Up 4 days                                  hassio_audio
+68bb021636cb        homeassistant/armv7-hassio-dns:9                   "/init coredns -conf…"   4 days ago          Up 4 days                                  hassio_dns
+5cf5021f1453        homeassistant/armv7-hassio-supervisor              "/init"                  4 days ago          Up 4 days                                  hassio_supervisor
+```
+
+すごいことになってますね。  
+上の図の通り、`homeassistant`本体だけでなく、`supervisor`や`audio`、`dns`等が起動していることが分かります。
+
+さらに、インストールのシェルスクリプトを見ると、2 つサービスを登録していることが分かります。  
+サービスの内容は`Loaded`の設定ファイルから確認できます。気になる方は見てみてください。
+
+##### hassio-supervisor.service
+
+```
+$ systemctl status hassio-supervisor.service
+● hassio-supervisor.service - Hass.io supervisor
+   Loaded: loaded (/etc/systemd/system/hassio-supervisor.service; enabled; vendor preset: enabled)
+   Active: active (running) since Sat 2020-10-17 00:22:10 JST; 4 days ago
+  Process: 1063 ExecStartPre=/usr/bin/docker stop hassio_supervisor (code=exited, status=0/SUCCESS)
+ Main PID: 1201 (bash)
+    Tasks: 13 (limit: 3862)
+   CGroup: /system.slice/hassio-supervisor.service
+           ├─1201 bash /usr/sbin/hassio-supervisor
+           ├─1228 bash /usr/sbin/hassio-supervisor
+           └─1229 docker start --attach hassio_supervisor
+
+10月 21 05:43:55 raspberrypi hassio-supervisor[1201]: 20-10-20 20:43:55 INFO (MainThread) [supervisor.host.network] Update local network information
+10月 21 05:43:56 raspberrypi hassio-supervisor[1201]: 20-10-20 20:43:56 INFO (MainThread) [supervisor.host.sound] Update PulseAudio information
+10月 21 06:23:15 raspberrypi hassio-supervisor[1201]: 20-10-20 21:23:15 INFO (MainThread) [supervisor.updater] Fetch update data from https://version.home-assistant.io/stable.json
+```
+
+##### hassio-apparmor.service
+
+```
+$ systemctl status hassio-apparmor.service
+● hassio-apparmor.service - Hass.io AppArmor
+   Loaded: loaded (/etc/systemd/system/hassio-apparmor.service; enabled; vendor preset: enabled)
+   Active: active (exited) since Sat 2020-10-17 00:22:23 JST; 4 days ago
+  Process: 2081 ExecStart=/usr/sbin/hassio-apparmor (code=exited, status=0/SUCCESS)
+ Main PID: 2081 (code=exited, status=0/SUCCESS)
+
+10月 17 00:22:22 raspberrypi systemd[1]: Starting Hass.io AppArmor...
+10月 17 00:22:23 raspberrypi hassio-apparmor[2081]: Warning: unable to find a suitable fs in /proc/mounts, is it mounted?
+10月 17 00:22:23 raspberrypi hassio-apparmor[2081]: Use --subdomainfs to override.
+10月 17 00:22:23 raspberrypi hassio-apparmor[2081]: [Error]: Can't load profile /usr/share/hassio/apparmor/hassio-supervisor
+10月 17 00:22:23 raspberrypi systemd[1]: Started Hass.io AppArmor.
+```
+
+### Home Assistant にアクセス！
