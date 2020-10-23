@@ -43,7 +43,7 @@ File Editor はファイルブラウザ兼エディタの機能を持ってお�
 
 <img src="./file_editor.png" alt="fileeditor" width="100%" />
 
-## DuckDNS or ngrok Client
+### DuckDNS / ngrok Client
 
 LAN 内のセットアップはできましたが、このままでは Wifi の届かない出先では Home Assistant は使えません。  
 なんとかして外のネットワークに我が家の HomeAssistant を公開する必要があります。
@@ -53,19 +53,70 @@ LAN 内のセットアップはできましたが、このままでは Wifi の�
 どちらを選択するかは、ネットワークの大元にグローバル IP アドレスが振られているか、プライベート IP アドレスが振られているかによって決まります。  
 マンションタイプの方のほとんどはプライベート IP アドレスと考えていいと思います。
 
-私もあまり詳しくないのでなんとも言えませんが、traceroute コマンドの出力を判断の材料とすることができます。  
-例えば私の場合は以下のように表示されます。
+私もあまり詳しくないのでなんとも言えませんが、`traceroute`コマンドの出力を判断の材料とすることができます。  
+例えば私の環境で Raspberry Pi から実行した場合は以下のように表示されます。
 
-```
+```bash
 $ traceroute google.co.jp
 traceroute to google.co.jp (216.58.197.163), 30 hops max, 60 byte packets
- 1  192.168.0.1 (192.168.0.1)  2.718 ms  2.542 ms  2.334 ms
- 2  192.168.10.231 (192.168.10.231)  2.179 ms  2.063 ms  1.955 ms
- 3  ike-gw12.transix.jp (14.0.9.130)  4.711 ms  5.107 ms  4.820 ms
- 4  ike-bbrt10.transix.jp (14.0.9.129)  5.133 ms  5.056 ms  4.878 ms
- 5  72.14.222.189 (72.14.222.189)  5.394 ms  5.616 ms  5.439 ms
- 6  * * *
- 7  108.170.242.193 (108.170.242.193)  6.322 ms 72.14.233.34 (72.14.233.34)  5.251 ms 142.250.226.60 (142.250.226.60)  6.967 ms
- 8  108.170.242.208 (108.170.242.208)  5.221 ms 216.239.62.27 (216.239.62.27)  4.876 ms 216.239.62.29 (216.239.62.29)  5.418 ms
- 9  nrt12s02-in-f3.1e100.net (216.58.197.163)  5.222 ms  5.155 ms 209.85.241.107 (209.85.241.107)  6.434 ms
+ 1  192.168.0.1 (192.168.0.1)  2.718 ms  2.542 ms  2.334 ms  # 家のWifiルータ
+ 2  192.168.**.** (192.168.**.**)  2.179 ms  2.063 ms  1.955 ms  # マンションのルータ？
+ 3  **.jp (**.**.**.**)  4.711 ms  5.107 ms  4.820 ms  # さらに上流のプロバイダのアドレス
+...
 ```
+
+以上から、私は「DuckDNS」を使える環境に無いので、「ngrok Client」について紹介いたします。
+
+#### 非公式レポジトリの追加
+
+Add-on Store には HomeAssistant 公式の Add-on のみ表示されており、
+個人で開発されている Add-on は表示されていません。
+
+これらをインストールするには公式レポジトリ以外に非公式のレポジトリに登録する必要があります。
+
+Supervisor で右上の設定ボタンをクリックし、Repositories を選択します。  
+デフォルトでは公式コミュニティの Home Assistant Comminity Add-ons のレポジトリに登録されています。  
+Add Repository から`https://github.com/ThePicklenat0r/hassio-addons`を追加します。
+
+すると Add-on Store に ngrok Client が追加されています。
+
+#### ngrok とは
+
+#### ngrok Client のインストール・使い方
+
+さっそく INSTALL しましょう。  
+追加方は Documentation タブに書いてあります。  
+Configuration タブで設定を追加する必要があるようです。以下に私の無料版 ngrok の例を紹介します。
+下にあるはそのままで OK です。
+
+```yaml
+log_level: info
+auth_token: ngrokのサイトで取得したToken
+region: ap
+tunnels:
+  - name: hass
+    proto: http
+    addr: 8123
+    inspect: false
+```
+
+SAVE したら Info タブに戻り、START します。
+
+#### 公開 URL 取得
+
+出先で Home Assistant にアクセスする URL を取得するにはセンサーを設定する必要があります。
+
+先程インストールした File editor を使い、configuration.yaml に以下を追記します。
+
+```yaml:title=configuration.yaml
+sensors:
+  - platform: rest
+    resource: http://localhost:4040/api/tunnels/hass
+    name: Home Assistant URL
+    value_template: "{{ value_json.public_url }}"
+```
+
+設定を反映するため、Home Assistant を再起動します。  
+「設定」→「サーバーコントロール」→「再起動」で再起動できます。
+
+再起動後、「開発者ツール」→「状態タブ」→「sensor.home_assistant_url」に外部からのアクセス用の URL が表示されています。
