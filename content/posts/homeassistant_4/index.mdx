@@ -13,6 +13,15 @@ tags:
 3. [Home Assistant のインストール](/home-assistantを使えるようにするまで-その-4)
 4. **[Add-on の使い方(本記事)](/home-assistantを使えるようにするまで-その-5)**
 
+### 目次
+
+1. [Add-on とは](#anchor1)
+1. [Add-on のインストール方法](#anchor2)
+1. [DuckDNS / ngrok Client](#anchor3)
+1. [Samba share](#anchor4)
+
+<a id="anchor1"></a>
+
 ### Add-on とは
 
 詳細は[公式サイト](https://www.home-assistant.io/addons/)を御覧ください。
@@ -22,6 +31,8 @@ HomeAssistant は Python パッケージなので、Python が使える範囲で
 Add-on は docker コンテナなので、さらに幅が広がります。
 
 紹介したい Add-on は山程あるので、本当に便利なものを紹介したいと思います。
+
+<a id="anchor2"></a>
 
 ### Add-on のインストール方法
 
@@ -42,6 +53,8 @@ Add-on によっては、その後の設定が必要になることがありま�
 File Editor はファイルブラウザ兼エディタの機能を持っており、`configuration.yaml`をはじめとした設定ファイルの編集にとても便利です。
 
 <img src="./file_editor.png" alt="fileeditor" width="100%" />
+
+<a id="anchor3"></a>
 
 ### DuckDNS / ngrok Client
 
@@ -82,16 +95,22 @@ Add Repository から`https://github.com/ThePicklenat0r/hassio-addons`を追加�
 
 #### ngrok とは
 
+[ngrok](https://ngrok.com/)とは、ngrok サーバを通して localhost 環境を公開できる仕組みです。  
+Home Assistant で使用する https に加え、tcp 接続(ssh)も可能です。
+
+いくつか課金プランがありますが、今回の用途ならば FREE プランで十分です。  
+ユーザ登録(Sign up)し、ユーザページで 30 文字程度の authtoken をメモしておいてください。
+
 #### ngrok Client のインストール・使い方
 
-さっそく INSTALL しましょう。  
-追加方は Documentation タブに書いてあります。  
+さっそく INSTALL します。  
+使い方は Documentation タブに書いてあります。  
 Configuration タブで設定を追加する必要があるようです。以下に私の無料版 ngrok の例を紹介します。
 下にあるはそのままで OK です。
 
 ```yaml
 log_level: info
-auth_token: ngrokのサイトで取得したToken
+auth_token: ngrokのサイトで取得したauthtoken
 region: ap
 tunnels:
   - name: hass
@@ -120,3 +139,31 @@ sensors:
 「設定」→「サーバーコントロール」→「再起動」で再起動できます。
 
 再起動後、「開発者ツール」→「状態タブ」→「sensor.home_assistant_url」に外部からのアクセス用の URL が表示されています。
+
+iPhone や Android のアプリで使用する場合、External IP アドレスにこのアドレスを、Internal IP アドレスに Raspberry Pi の LAN アドレスを指定しておきます。
+
+<a id="anchor4"></a>
+
+### Samba share
+
+Samba です。LAN 内でファイルの共有ができます。
+
+INSTALL し、Documentation を見ながら Configuration を自分用に設定していきます。  
+私がデフォルトから変えたところは、以下になります。
+
+- username: ご自由に
+- password: ご自由に
+- allow_hosts: 自分のプライベートアドレスのクラスに合わせて選択
+
+START すると、パソコン等からアクセスできるようになります。  
+Mac の Finder の場合は、左サイドバーの「場所」→「ネットワーク」に進むと、Raspberry Pi のホスト名が表示されます。  
+ここでユーザ名とパスワードを入力すると Samba にアクセスできるようになりました。
+
+<img src="./place.png" alt="finder_place" />
+
+<img src="./samba.png" alt="finder_samba" />
+
+<img src="./list.png" alt="finder_list" />
+
+Raspberry Pi 上のアクセス先は HomeAssistant の設定が保存されたフォルダになります。
+設定ファイル(config)をエディタで編集したり、音楽・動画などのメディア(media)を保存しておいて再生することもできるようになります。
