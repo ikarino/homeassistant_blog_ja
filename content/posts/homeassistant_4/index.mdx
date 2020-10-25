@@ -13,15 +13,6 @@ tags:
 3. [Home Assistant のインストール](/home-assistantを使えるようにするまで-その-4)
 4. **[Add-on の使い方(本記事)](/home-assistantを使えるようにするまで-その-5)**
 
-### 目次
-
-1. [Add-on とは](#anchor1)
-1. [Add-on のインストール方法](#anchor2)
-1. [DuckDNS / ngrok Client](#anchor3)
-1. [Samba share](#anchor4)
-
-<a id="anchor1"></a>
-
 ### Add-on とは
 
 詳細は[公式サイト](https://www.home-assistant.io/addons/)を御覧ください。
@@ -31,8 +22,6 @@ HomeAssistant は Python パッケージなので、Python が使える範囲で
 Add-on は docker コンテナなので、さらに幅が広がります。
 
 紹介したい Add-on は山程あるので、本当に便利なものを紹介したいと思います。
-
-<a id="anchor2"></a>
 
 ### Add-on のインストール方法
 
@@ -53,8 +42,6 @@ Add-on によっては、その後の設定が必要になることがありま�
 File Editor はファイルブラウザ兼エディタの機能を持っており、`configuration.yaml`をはじめとした設定ファイルの編集にとても便利です。
 
 <img src="./file_editor.png" alt="fileeditor" width="100%" />
-
-<a id="anchor3"></a>
 
 ### DuckDNS / ngrok Client
 
@@ -141,8 +128,6 @@ sensors:
 再起動後、「開発者ツール」→「状態タブ」→「sensor.home_assistant_url」に外部からのアクセス用の URL が表示されています。
 
 iPhone や Android のアプリで使用する場合、External IP アドレスにこのアドレスを、Internal IP アドレスに Raspberry Pi の LAN アドレスを指定しておきます。
-
-<a id="anchor4"></a>
 
 ### Samba share
 

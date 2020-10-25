@@ -1,0 +1,103 @@
+---
+title: HomeAssitantのオートメーション
+date: 2020-10-25 01:00:00
+description: "HomeAssitantのオートメーションを実例を使いながら説明します"
+tags:
+  - Home Assistant
+---
+
+import MyYoutube from "../../MyYoutube";
+import RakutenAffiliate from "../../RakutenAffiliate";
+
+## オートメーションとは
+
+Home Assistant ではセンサー値やイベントに応じて任意のアクションを発生させることができます。
+
+今回は一例として、
+
+1. (イベント): 私が家を出た際に
+2. (条件): 同居人が家にいるときだけ
+3. (アクション): Google Home にその旨を tts(text to speech)でしゃべらせる
+
+オートメーションを登録してみます。
+
+こちらのオートメーションは Google Home が Home Assistant に登録されており、位置情報をスマートフォンアプリとやり取りしている状態を前提としています。
+
+## オートメーションの登録
+
+### 概要の設定
+
+まずは設定画面からオートメーションを選択し、右下の＋ボタンで新しいオートメーションを作成していきます。
+![automation_tab](./settings.png)
+
+次にオートメーションの概要を Home Assistant に伝えてあげます。  
+内容を[Almond](https://almond.stanford.edu/)が解釈し、適当な設定をしてくれるようです。
+![create_new](./create.png)
+
+解釈された結果、対象となる人物を選択するダイアログが出てきました。すごいですね。
+![select_person](./person.png)
+
+### 詳細設定
+
+詳細設定画面に移ります。
+
+#### トリガー
+
+Almond が設定してくれたものから変更していません。
+![trigger](./trigger.png)
+
+#### 条件
+
+同居人が家にいるときだけ発動する条件を加えました。
+
+![condition](./condition.png)
+
+#### アクション
+
+アクションは`Edit in YAML`の内容を[tts のページ](https://www.home-assistant.io/integrations/tts/)を参考に作成しました。
+
+![condition](./action.png)
+
+tts だけでなく、[notify](https://www.home-assistant.io/integrations/notify/)を使ってスマートフォンに通知を送るとさらに便利になりますね。
+
+### 実行テスト
+
+オートメーションの保存後に一覧画面に戻ると、定義したオートメーションが表示されているのが分かります。
+
+「トリガー」をクリックすると、設定したトリガーを模擬することができます。これで実行テストができますね。
+![check](./exec_check.png)
+
+## 生の設定ファイル
+
+以上で設定したオートメーションは`automations.yaml`に保存されています。  
+File Editor 等で確認してみてください。
+
+```yaml:title=automations.yaml
+- id: "1603610337269"
+  alias: tts when i leave home
+  description: ""
+  trigger:
+    - platform: zone
+      entity_id: person.shotaro
+      zone: zone.home
+      event: leave
+  condition:
+    - condition: zone
+      entity_id: person.sayaka
+      zone: zone.home
+  action:
+    - service: tts.google_translate_say
+      entity_id: media_player.google_home_mini
+      data:
+        message: しょうたろう が家を離れました
+        language: ja
+```
+
+## 最後に
+
+Home Assistant のオートメーションを実例をもとに説明しました。
+
+アクションの設定はサンプルがないと厳しいですが、その他はほぼ直感的に設定できたと思います。
+この例を出発点とし、様々なセンサ値からオートメーションを作成していこうと思います。
+
+HomeAssistant に関する記事は[こちら](/tags/home-assistant)。

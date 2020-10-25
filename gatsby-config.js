@@ -12,7 +12,7 @@ module.exports = {
     siteUrl: `https://smartlife99.netlify.app/`,
     siteDescription: `自身の経験をもとにスマートホームやライフハックに関して得た情報を発信します`,
     siteLanguage: `ja`,
-    // siteImage: `/banner.jpg`,
+    siteImage: `/banner.jpg`,
     author: `@ikarino99`,
   },
   plugins: [

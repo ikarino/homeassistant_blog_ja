@@ -36,7 +36,10 @@ function RakutenAffiliate({ url, imgurl, title, value, value_date }) {
       <a href={url} style={styleAnchor}>
         <img src={imgurl} alt={title} style={styleImg} />
         <div style={styleDescription}>
-          <img src="https://static.affiliate.rakuten.co.jp/makelink/rl.svg" />
+          <img
+            src="https://static.affiliate.rakuten.co.jp/makelink/rl.svg"
+            alt="rakuten"
+          />
           <br />
           {title.slice(0, 20)}...
           <br />
