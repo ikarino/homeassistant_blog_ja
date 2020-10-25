@@ -23,6 +23,9 @@ Home Assistant ではセンサー値やイベントに応じて任意のアク�
 
 こちらのオートメーションは Google Home が Home Assistant に登録されており、位置情報をスマートフォンアプリとやり取りしている状態を前提としています。
 
+- [App Store リンク](https://apps.apple.com/jp/app/home-assistant/id1099568401)
+- [Google Play リンク](https://play.google.com/store/apps/details?id=io.homeassistant.companion.android)
+
 ## オートメーションの登録
 
 ### 概要の設定
@@ -72,7 +75,7 @@ tts だけでなく、[notify](https://www.home-assistant.io/integrations/notify
 以上で設定したオートメーションは`automations.yaml`に保存されています。  
 File Editor 等で確認してみてください。
 
-```yaml:title=automations.yaml
+```yaml:title=/config/automations.yaml
 - id: "1603610337269"
   alias: tts when i leave home
   description: ""

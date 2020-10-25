@@ -1,0 +1,73 @@
+---
+title: Home Assistantのスマートフォンアプリ
+date: 2020-10-26
+description: "Home Assistantのスマートフォンアプリについて紹介します"
+tags:
+  - Home Assistant
+---
+
+import MyYoutube from "../../MyYoutube";
+import RakutenAffiliate from "../../RakutenAffiliate";
+
+### ダウンロードリンク
+
+以下のリンクからダウンロードできると思います。
+
+- [App Store リンク](https://apps.apple.com/jp/app/home-assistant/id1099568401)
+- [Google Play リンク](https://play.google.com/store/apps/details?id=io.homeassistant.companion.android)
+
+### スマートフォンアプリのメリット
+
+HomeAssistant は web から操作できるので、スマートフォンのブラウザでも同じように操作することができます。
+
+それならなぜ専用アプリをインストールするのか、
+それは**様々なスマートフォンのセンサ値を Home Assistant に登録したり、
+Home Assistant から通知を受け取ったりすることができる**からです。
+
+以下では設定方法やセンサ値について紹介していきます。
+
+### 設定方法
+
+まずは LAN 内でログインされることをおすすめします。  
+登録したユーザ名、パスワードでログインしていきます。
+
+ブラウザ版と異なり、左ペインの一番下に「アプリの構成」という項目があります。
+![app](./IMG_0806.PNG)
+
+さしあたり重要となるのが Connection です。
+![setting](./IMG_0807.PNG)
+
+Interal URL には固定したプライベート IP アドレスを、External URL には DuckDNS や ngrok Client で取得した出先用の URL を入力します。
+
+- [IP 固定アドレスの固定についての記事](/home-assistantを使えるようにするまで-その-3)
+- [DuckDNS/ngrok Client についての記事](/home-assistantを使えるようにするまで-その-5)
+
+![connection](./IMG_0810.PNG)
+
+もう 1 つ確認しておきたいのが、位置情報(Location)を常に有効化していることです。
+![lcation](./IMG_0811.PNG)
+
+### センサ値
+
+スマートフォンからは多数のセンサ値を取得できます。  
+スマートフォンの種類によって多少異なるかもしれません。こちらは iPone SE2 の一例です。
+
+|             エンティティ              | 意味                      |
+| :-----------------------------------: | :------------------------ |
+|       device_tracker.xxx_iphone       | 位置情報                  |
+|      sensor.xxx_iphone_activity       |                           |
+| sensor.xxx_iphone_average_active_pace | 移動速度？                |
+|    sensor.xxx_iphone_battery_level    | バッテリー残量            |
+|    sensor.xxx_iphone_battery_state    | バッテリーの状態          |
+|        sensor.xxx_iphone_bssid        | ネットワーク接続先の SSID |
+|   sensor.xxx_iphone_connection_type   | ネットワーク接続の種類    |
+|      sensor.xxx_iphone_distance       | 移動距離                  |
+|   sensor.xxx_iphone_floors_ascended   | 登ったフロア数            |
+|  sensor.xxx_iphone_floors_descended   |                           |
+|  sensor.xxx_iphone_geocoded_location  |                           |
+| sensor.xxx_iphone_last_update_trigger |                           |
+|        sensor.xxx_iphone_sim_1        |                           |
+|        sensor.xxx_iphone_sim_2        |                           |
+|        sensor.xxx_iphone_ssid         |                           |
+|        sensor.xxx_iphone_steps        |                           |
+|       sensor.xxx_iphone_storage       |                           |
