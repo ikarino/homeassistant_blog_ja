@@ -15,16 +15,24 @@ Home Assistant ではセンサー値やイベントに応じて任意のアク�
 
 今回は一例として、
 
-1. (イベント): 私が家を出た際に
-2. (条件): 同居人が家にいるときだけ
-3. (アクション): Google Home にその旨を tts(text to speech)でしゃべらせる
+1. **(イベント): 私が家を出た際に**
+2. **(条件): 同居人が家にいるときだけ**
+3. **(アクション): Google Home にその旨を tts(text to speech)でしゃべらせる**
 
 オートメーションを登録してみます。
 
-こちらのオートメーションは Google Home が Home Assistant に登録されており、位置情報をスマートフォンアプリとやり取りしている状態を前提としています。
+こちらのオートメーションは Google Home や Google NEST が Home Assistant に登録されており、位置情報をスマートフォンアプリとやり取りしている状態を前提としています。
 
 - [App Store リンク](https://apps.apple.com/jp/app/home-assistant/id1099568401)
 - [Google Play リンク](https://play.google.com/store/apps/details?id=io.homeassistant.companion.android)
+
+<RakutenAffiliate
+  url="https://hb.afl.rakuten.co.jp/ichiba/1d71f730.811d6a9d.1d71f731.09e7e11f/?pc=https%3A%2F%2Fitem.rakuten.co.jp%2Fworld-depo%2Fm-ctc0167%2F&link_type=picttext&ut=eyJwYWdlIjoiaXRlbSIsInR5cGUiOiJwaWN0dGV4dCIsInNpemUiOiIyNDB4MjQwIiwibmFtIjoxLCJuYW1wIjoicmlnaHQiLCJjb20iOjEsImNvbXAiOiJkb3duIiwicHJpY2UiOjEsImJvciI6MSwiY29sIjoxLCJiYnRuIjoxLCJwcm9kIjowLCJhbXAiOmZhbHNlfQ%3D%3D"
+  title="◆Google NEST MINI ネストミニ チョーク 旧ホームミニ本体 Google アシスタント 小型スマートスピーカー bluetooth Wi-Fi 音声 認識 ハンズフリー ライトグレー 人工知能AI IOT Android iOS home mini"
+  imgurl="https://hbb.afl.rakuten.co.jp/hgb/1d71f730.811d6a9d.1d71f731.09e7e11f/?me_id=1284941&item_id=11388883&pc=https%3A%2F%2Fthumbnail.image.rakuten.co.jp%2F%400_mall%2Fworld-depo%2Fcabinet%2Fgoq001%2F634_1.jpg%3F_ex%3D240x240&s=240x240&t=picttext"
+  value="価格：2300円（税込、送料無料)"
+  value_date="(2020/10/27時点)"
+/>
 
 ## オートメーションの登録
 

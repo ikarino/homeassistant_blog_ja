@@ -93,7 +93,7 @@ Home Assistant で使用する https に加え、tcp 接続(ssh)も可能です�
 さっそく INSTALL します。  
 使い方は Documentation タブに書いてあります。  
 Configuration タブで設定を追加する必要があるようです。以下に私の無料版 ngrok の例を紹介します。
-下にあるはそのままで OK です。
+下にある Network はそのままで OK です。
 
 ```yaml
 log_level: info
@@ -128,6 +128,8 @@ sensors:
 再起動後、「開発者ツール」→「状態タブ」→「sensor.home_assistant_url」に外部からのアクセス用の URL が表示されています。
 
 iPhone や Android のアプリで使用する場合、External IP アドレスにこのアドレスを、Internal IP アドレスに Raspberry Pi の LAN アドレスを指定しておきます。
+
+スマートフォン用アプリについて[こちらの記事](/home-assistantのスマートフォンアプリ)で紹介しています。
 
 ### Samba share
 
