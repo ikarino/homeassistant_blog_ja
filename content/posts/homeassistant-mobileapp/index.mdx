@@ -50,24 +50,52 @@ Interal URL には固定したプライベート IP アドレスを、External U
 ### センサ値
 
 スマートフォンからは多数のセンサ値を取得できます。  
-スマートフォンの種類によって多少異なるかもしれません。こちらは iPhone SE2 の一例です。
+スマートフォンの種類によって多少異なるかもしれません。こちらは iPhone SE2 の一例です。  
+どう考えても使いみちのないものも含まれていますが、位置情報やバッテリー残量の情報は使えそうです。
 
-|             エンティティ              | 意味                      |
-| :-----------------------------------: | :------------------------ |
-|       device_tracker.xxx_iphone       | 位置情報                  |
-|      sensor.xxx_iphone_activity       |                           |
-| sensor.xxx_iphone_average_active_pace | 移動速度？                |
-|    sensor.xxx_iphone_battery_level    | バッテリー残量            |
-|    sensor.xxx_iphone_battery_state    | バッテリーの状態          |
-|        sensor.xxx_iphone_bssid        | ネットワーク接続先の SSID |
-|   sensor.xxx_iphone_connection_type   | ネットワーク接続の種類    |
-|      sensor.xxx_iphone_distance       | 移動距離                  |
-|   sensor.xxx_iphone_floors_ascended   | 登ったフロア数            |
-|  sensor.xxx_iphone_floors_descended   |                           |
-|  sensor.xxx_iphone_geocoded_location  |                           |
-| sensor.xxx_iphone_last_update_trigger |                           |
-|        sensor.xxx_iphone_sim_1        |                           |
-|        sensor.xxx_iphone_sim_2        |                           |
-|        sensor.xxx_iphone_ssid         |                           |
-|        sensor.xxx_iphone_steps        |                           |
-|       sensor.xxx_iphone_storage       |                           |
+- device_tracker.xxx_iphone
+- sensor.xxx_iphone_activity
+- sensor.xxx_iphone_average_active_pace
+- sensor.xxx_iphone_battery_level
+- sensor.xxx_iphone_battery_state
+- sensor.xxx_iphone_bssid
+- sensor.xxx_iphone_connection_type
+- sensor.xxx_iphone_distance
+- sensor.xxx_iphone_floors_ascended
+- sensor.xxx_iphone_floors_descended
+- sensor.xxx_iphone_geocoded_location
+- sensor.xxx_iphone_last_update_trigger
+- sensor.xxx_iphone_sim_1
+- sensor.xxx_iphone_sim_2
+- sensor.xxx_iphone_ssid
+- sensor.xxx_iphone_steps
+- sensor.xxx_iphone_storage
+
+## センサ値の LoveLace UI への登録
+
+本筋からずれますが、 LoveLace UI と呼ばれる、左ペイン「状態」をクリックすると表示される画面に
+バッテリー残量をカードにして表示してみようと思います。
+
+1. 右上のボタンから「ダッシュボードを編集」をクリックします。
+1. 右下に現れた＋ボタンをクリックします。
+1. By Entity タブを開き、`sensor.xxx_iphone_battery_level`にチェックを入れ、`CONTINUE`します。
+1. カードを提案してくれるのですが、今回は表示されませんでした。「別のカードを選択する」をクリックします。
+1. 今回は「ゲージ」のカードを選択します。
+
+カードの内容をいろいろ設定できるようです。  
+クールなカードができあがりました笑
+
+![config](./config.png)
+
+## 最後に
+
+スマートフォン向けの Home Assistant アプリの使い方と設定について紹介しました。
+
+スマートフォンを手放す人はほとんどいない世の中ですから、スマートフォンのセンサ情報は個人そのものと言っても過言ではありません。  
+様々な活用方法があると思います。位置情報を活用した事例について[こちらの記事](/home-assitantのオートメーション)で紹介しています。
+
+また、通知機能を使うことで、出先でも家の状態をすぐに知ることができます。
+
+新たに IoT 機器を購入しないで遊べることも大きなメリットでしょう。
+
+最後までお読みいただきありがとうございました。

@@ -1,0 +1,33 @@
+---
+title: Nature RemoをHome Assistantで使う[2/2]
+date: 2020-10-28 02:00:00
+description: "Nature Remoの使い方とHome Assistantとの簡単な連携方法を紹介します。"
+tags:
+  - IoT
+  - Home Assistant
+---
+
+import MyYoutube from "../../MyYoutube";
+import RakutenAffiliate from "../../RakutenAffiliate";
+
+長くなるので記事を 2 つに分割します。
+
+- [Nature Remo を Home Assistant で使う[1/2]](/nature-remoを-home-assistantで使う-1-2)
+- [Nature Remo を Home Assistant で使う[2/2]](/nature-remoを-home-assistantで使う-2-2)
+
+Nature Remo と Home Assistant の連携に関する記事です。
+
+<RakutenAffiliate
+  url="https://hb.afl.rakuten.co.jp/ichiba/1d756ea1.2a4ca8db.1d756ea2.2302b4a0/?pc=https%3A%2F%2Fitem.rakuten.co.jp%2Fnature-remo%2Fremo-1w3%2F&link_type=picttext&ut=eyJwYWdlIjoiaXRlbSIsInR5cGUiOiJwaWN0dGV4dCIsInNpemUiOiIyNDB4MjQwIiwibmFtIjoxLCJuYW1wIjoicmlnaHQiLCJjb20iOjEsImNvbXAiOiJkb3duIiwicHJpY2UiOjEsImJvciI6MSwiY29sIjoxLCJiYnRuIjoxLCJwcm9kIjowLCJhbXAiOmZhbHNlfQ%3D%3D"
+  title="Nature スマートリモコン Nature Remo 3 家電コントロール Amazon Alexa / Google Home / Siri 対応 GPS連携 温度センサー Bluetooth Low Energy Remo-1W3"
+  imgurl="https://hbb.afl.rakuten.co.jp/hgb/1d756ea1.2a4ca8db.1d756ea2.2302b4a0/?me_id=1378660&item_id=10000006&pc=https%3A%2F%2Fthumbnail.image.rakuten.co.jp%2F%400_mall%2Fnature-remo%2Fcabinet%2Fremo-1w3%2Fimgrc0074113842.jpg%3F_ex%3D240x240&s=240x240&t=picttext"
+  value="価格：9980円（税込、送料無料)"
+  value_date="(2020/10/28時点)"
+/>
+
+## Home Assistant の RESTful センサー
+
+[公式サイトの説明](https://www.home-assistant.io/integrations/rest/)
+
+`rest`センサーを使い、[前回記事](/nature-remoを-home-assistantで使う-1-2)で紹介した
+Nature Remo API から得られるセンサ値を取得していきます。
