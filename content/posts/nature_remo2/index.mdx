@@ -10,7 +10,7 @@ tags:
 import MyYoutube from "../../MyYoutube";
 import RakutenAffiliate from "../../RakutenAffiliate";
 
-長くなるので記事を 2 つに分割します。
+長くなるので記事を 2 つに分割しています。
 
 - [Nature Remo を Home Assistant で使う[1/2]](/nature-remoを-home-assistantで使う-1-2)
 - [Nature Remo を Home Assistant で使う[2/2]](/nature-remoを-home-assistantで使う-2-2)
@@ -25,9 +25,201 @@ Nature Remo と Home Assistant の連携に関する記事です。
   value_date="(2020/10/28時点)"
 />
 
+## Nature Remo API
+
+まず、[前回記事](/nature-remoを-home-assistantで使う-1-2)で紹介した Nature Remo API の復習をします。
+
+このようなクエリに対して、
+
+```bash
+curl -X GET "https://api.nature.global/1/devices" -H "authorization: Bearer ここにアクセストークン" | jq
+```
+
+以下のようなレスポンスが得られるのでした。
+
+```json
+[
+  {
+    # 一部省略
+    "firmware_version": "Remo/1.0.32",
+    "temperature_offset": 0,
+    "humidity_offset": 0,
+    "newest_events": {
+      "hu": {
+        "val": 60,
+        "created_at": "2020-10-28T10:29:17Z"
+      },
+      "il": {
+        "val": 20,
+        "created_at": "2020-10-28T10:37:30Z"
+      },
+      "mo": {
+        "val": 1,
+        "created_at": "2020-10-28T10:48:38Z"
+      },
+      "te": {
+        "val": 23.4,
+        "created_at": "2020-10-28T10:55:20Z"
+      }
+    }
+  }
+]
+```
+
+ここから取り出したい値は以下になります。
+
+- 湿度 60%
+- 照度 20（単位不明）
+- 人感（モーション）センサー 0 or 1
+- 温度 23.4℃
+
 ## Home Assistant の RESTful センサー
 
 [公式サイトの説明](https://www.home-assistant.io/integrations/rest/)
 
-`rest`センサーを使い、[前回記事](/nature-remoを-home-assistantで使う-1-2)で紹介した
-Nature Remo API から得られるセンサ値を取得していきます。
+`rest`センサーを使い、上記のセンサ値を取得していきます。
+
+### configuration.yaml
+
+Add-on の File Editor 等を使用し、Home Assistant の設定ファイル`configuration.yaml`を編集していきます。
+
+デフォルトから 1 行だけ追加しています。`group`や`automation`の中身を別ファイルにまとめているように、
+`sensor`も`sensor.yaml`にまとめることにしました。
+
+```yaml:title=configuration.yaml
+# Configure a default setup of Home Assistant (frontend, api, etc)
+default_config:
+
+group: !include groups.yaml
+automation: !include automations.yaml
+script: !include scripts.yaml
+scene: !include scenes.yaml
+sensor: !include sensors.yaml # <= 追加
+```
+
+### secrets.yaml
+
+次に Nature Remo API のアクセストークンを`secrets.yaml`に追記します。  
+このファイルに他の人には秘密にしておきたい情報をひとまとめにしておくことで、
+設定ファイル管理を楽にできます。
+
+```yaml:title=secrets.yaml
+# Use this file to store secrets like usernames and passwords.
+# Learn more at https://www.home-assistant.io/docs/configuration/secrets/
+some_password: welcome
+
+nature_remo_api_token: Bearer ここにアクセストークン
+```
+
+### sensors.yaml
+
+センサ情報取得の部分を設定していきます。
+
+まずは簡単な設定例を紹介します。  
+`value_template`以外は特に大きなところはありません。上記の curl コマンドを 60 秒ごとに実行しています。
+
+保存後、Home Assistant を再起動して設定を有効化します。  
+再起動後、左ペインの履歴から新たなエンティティ(nature_remo_temperature)が登録されたことが分かると思います。
+
+```yaml:title=sensors.yaml
+# 本当は全部の行頭に2つスペースが入ります。
+# 編集上の問題で詰められてしまってます。
+- platform: rest
+  scan_interval: 60
+  resource: https://api.nature.global/1/devices
+  name: nature_remo_temperature
+  headers:
+    authorization: !secret nature_remo_api_token
+  value_template: '{{ value_json[0]["newest_events"]["te"]["val"] }}'
+```
+
+### value_template
+
+`value_template`は Python の web サービス用テンプレートエンジン[Jinja2](https://jinja.palletsprojects.com/en/2.11.x/)に基づく入力になります。  
+Jinja2 は左ペイン開発者ツールのテンプレートから試すことができます。
+
+試しに以下を入力してみてください。
+インタラクティブに温度が表示されたと思います。エンティティの状態はすべて`states`に保存されており、データを取り出せるようになっています。
+
+```
+{{ states.sensor.nature_remo_temperature.state }}
+```
+
+温度を取り出すために使用した`value_template`は、API で返ってきた json を表す`value_json`に対し、
+
+1. 配列 1 つめの
+1. `newest_event`キーの中の
+1. `te`キーの中の
+1. `val`キーの中に入っている値
+
+を取り出していることになります。
+
+### 最終形
+
+上記の温度の例をそのまま縦に増やしていき、湿度や照度を取得しても構いませんが、
+1 回の API 使用で済むところを 4 回使用することになり、無駄が多くなります。
+
+rest sensor で newest_event を保管しておき、
+[template sensor](https://www.home-assistant.io/integrations/template/)で分岐させて各センサ値を取得しています。
+
+```yaml:title=sensors.yaml
+# 本当は全部の行頭に2つスペースが入ります。
+# 編集上の問題で詰められてしまってます。
+- platform: rest
+  scan_interval: 300
+  resource: https://api.nature.global/1/devices
+  name: remo_sensors
+  headers:
+    authorization: !secret nature_remo_api_token
+  value_template: "OK"
+  json_attributes_path: "$[0].newest_events"
+  json_attributes:
+    - hu
+    - il
+    - mo
+    - te
+- platform: template
+  sensors:
+    remo_temperature:
+      value_template: '{{ states.sensor.remo_sensors.attributes["te"]["val"] }}'
+      unit_of_measurement: "°C"
+      device_class: temperature
+    remo_humidity:
+      value_template: '{{ states.sensor.remo_sensors.attributes["hu"]["val"] }}'
+      unit_of_measurement: "%"
+      device_class: humidity
+    remo_illuminance:
+      value_template: '{{ states.sensor.remo_sensors.attributes["il"]["val"] }}'
+      device_class: illuminance
+```
+
+```yaml:title=binary_sensors.yaml
+- platform: template
+  sensors:
+    remo_motion:
+      value_template: '{{ states.sensor.remo_sensors.attributes["mo"]["val"] }}'
+      device_class: motion
+```
+
+`device_class`を設定することで、UI にいい感じのアイコンが表示されるようになります。  
+種類は下記リンクに一覧があります。
+
+- [sensor](https://www.home-assistant.io/integrations/sensor#device-class)
+- [binary_sensor](https://www.home-assistant.io/integrations/binary_sensor/#device-class)
+
+### 最後に
+
+API を使って Home Assistant と Nature Remo を連携する方法について紹介しました。  
+REST API や Jinja に慣れていないと敷居の高い内容だったと思います。
+
+Nature Remo API のうち、今回使用したものはほんの一部です。
+リモコン・シーン機能も API として利用できるので、本記事を参考に Home Assistant へ取り込んでみてください。
+
+今回のような設定を行わなくても、一度にエンティティやスイッチを取り出してしまう仕組みがインテグレーションです。  
+インテグレーションはデバイスの販売会社が実装していたり、有志の方が開発しています。
+
+Nature Remo の場合、下記で有志の方が開発してらっしゃいます！応援しましょう！
+
+[https://github.com/yutoyazaki/hass-nature-remo](https://github.com/yutoyazaki/hass-nature-remo)
+
+私もいつか Developer マニュアルを読んで開発に貢献したいと思っています。
