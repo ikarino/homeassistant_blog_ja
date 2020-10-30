@@ -155,6 +155,24 @@ Mac の Finder の場合は、左サイドバーの「場所」→「ネット�
 Raspberry Pi 上のアクセス先は HomeAssistant の設定が保存されたフォルダになります。
 設定ファイル(config)をエディタで編集したり、音楽・動画などのメディア(media)を保存しておいて再生することもできるようになります。
 
+### Google Drive Backup
+
+Home Assistant のバックアップを作成できます。  
+今後かなりの設定をしていきますので、バックアップは非常に重要です。
+Raspberry Pi で使用している micro SD はいつ壊れてもおかしくないと思っておいたほうがいいでしょう。
+
+ngrok Client 同様に`https://github.com/sabeechen/hassio-google-drive-backup`をレポジトリに登録します。
+
+インストール・開始手順は他の Add-on と同じです。  
+Configuration ではバックアップのスケジュール等を設定できるようです。私はそのまま使いました。
+
+そのままでは Google アカウントと紐付いていません。OPEN WEB UI をクリックし、セットアップします。  
+Google Drive へのアクセスを許可すると`Authorization String`がもらえますので、コピーペーストするとバックアップがスタートしました。
+
+Google Drive を見てみると、`Home Assistant Snapshots`というフォルダができていました。中には tar ball になった Snapshot が保存されていました。  
+試しにダウンロードして展開してみると、Add-on を含めた Home Assistant 全体がバックアップがされていました。
+![backup](./backup.png)
+
 ## 最後に
 
 4 つの記事で Home Assistant を使えるようにしました。  

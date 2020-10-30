@@ -70,8 +70,10 @@ curl -X GET "https://api.nature.global/1/devices" -H "authorization: Bearer こ�
 
 - 湿度 60%
 - 照度 20（単位不明）
-- 人感（モーション）センサー 0 or 1
+- 人感（モーション）センサー 0 or 1[^1]
 - 温度 23.4℃
+
+[^1]: 人感センサーは常に 1 が返ってくるらしいです[(参考)](https://zlog.hateblo.jp/entry/2019/07/07/Nature-remo-motion-sensor)。
 
 ## Home Assistant の RESTful センサー
 
@@ -116,7 +118,9 @@ nature_remo_api_token: Bearer ここにアクセストークン
 センサ情報取得の部分を設定していきます。
 
 まずは簡単な設定例を紹介します。  
-`value_template`以外は特に大きなところはありません。上記の curl コマンドを 60 秒ごとに実行しています。
+`value_template`以外は特に大きなところはありません。上記の curl コマンドを 60 秒ごとに実行しています[^2]。
+
+[^2]: 5 分に 30 回がリクエストの上限です。
 
 保存後、Home Assistant を再起動して設定を有効化します。  
 再起動後、左ペインの履歴から新たなエンティティ(nature_remo_temperature)が登録されたことが分かると思います。
@@ -138,7 +142,7 @@ nature_remo_api_token: Bearer ここにアクセストークン
 `value_template`は Python の web サービス用テンプレートエンジン[Jinja2](https://jinja.palletsprojects.com/en/2.11.x/)に基づく入力になります。  
 Jinja2 は左ペイン開発者ツールのテンプレートから試すことができます。
 
-試しに以下を入力してみてください。
+試しに以下を入力してみてください。  
 インタラクティブに温度が表示されたと思います。エンティティの状態はすべて`states`に保存されており、データを取り出せるようになっています。
 
 ```
@@ -161,6 +165,8 @@ Jinja2 は左ペイン開発者ツールのテンプレートから試すこと�
 
 rest sensor で newest_event を保管しておき、
 [template sensor](https://www.home-assistant.io/integrations/template/)で分岐させて各センサ値を取得しています。
+
+人感センサーについては`val`に意味は無いようなので[^1]、[新しい記事](/nature-remoの人感センサーを-home-assistantに取り込む)に連携方法をまとめました。
 
 ```yaml:title=sensors.yaml
 # 本当は全部の行頭に2つスペースが入ります。
@@ -200,6 +206,9 @@ rest sensor で newest_event を保管しておき、
       value_template: '{{ states.sensor.remo_sensors.attributes["mo"]["val"] }}'
       device_class: motion
 ```
+
+こんなカードができました。
+![card](./card.png)
 
 `device_class`を設定することで、UI にいい感じのアイコンが表示されるようになります。  
 種類は下記リンクに一覧があります。
