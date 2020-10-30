@@ -56,9 +56,9 @@ typings/
 .yarn-integrity
 
 # dotenv environment variables file
-.env
-.env.*
-!.env.example
+# .env
+# .env.*
+# !.env.example
 
 .cache
 **/.cache
