@@ -23,6 +23,8 @@ const Layout = ({ children, className = `` }: LayoutProps) => (
         },
         img: {
           borderStyle: `none`,
+          width: `80%`,
+          height: `auto`
         },
         pre: {
           fontFamily: `monospace`,
