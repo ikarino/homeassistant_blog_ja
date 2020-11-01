@@ -34,7 +34,7 @@ const BlogListItem = ({ post, showTags = true }: BlogListItemProps) => (
           <ItemTags tags={post.tags} />
         </React.Fragment>
       )}<br />
-      <span sx={{fontSize: [0.5, 0.5, 0.5]}}>
+      <span sx={{fontSize: [0.8, 0.8, 0.8]}}>
         {post.description}
       </span>
     </p>
