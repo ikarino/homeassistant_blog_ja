@@ -1,0 +1,64 @@
+---
+title: App Daemonを1から学ぶ
+date: 2020-11-01
+description: "Home Assistantとゆるく接続したPython環境App Daemonについて学んでいきます"
+tags:
+  - Home Assistant
+  - python
+---
+
+import MyYoutube from "../../MyYoutube";
+import RakutenAffiliate from "../../RakutenAffiliate";
+
+引越しを機に再セットアップしようということで、備忘録を兼ねて書いていきます。
+
+### App Daemon とは
+
+Home Assistant のオートメーションは直感的にわかりやすく設定できますが、
+ちょっと複雑なことをしようとすると途端に摩訶不思議な YAML が必要になって、
+管理不能になったり、再生産性が悪くなります。
+
+また、設定を変えたときにログを見るのが少し億劫だったり、サーバ再起動が意外と面倒だったり、
+開発者としてはちょっとやりにくい部分があります。
+
+Python で全部管理できたら楽だなーということで生まれたのが App Daemon です。  
+App Daemon は Home Assistant とは独立しており、HTTP でゆるーくつながっています。
+
+### インストール
+
+Add-on としてインストールするのが最も簡単だと思います。`App Daemon 4`です。  
+[ドキュメント](https://appdaemon.readthedocs.io/en/latest/INSTALL.html)には、
+pip でインストールする方法、docker を使ってインストールする方法等が記載されています。
+
+### 今回のお題
+
+入門用として[HASS ユーザ用のチュートリアル](https://appdaemon.readthedocs.io/en/latest/HASS_TUTORIAL.html)が非常にわかりやすかったです。
+
+今回は、普段 crontab で実行している Python スクリプトを App Deamon に持ち込んで定期実行する、
+というなんとも意味のないことをやってみようと思います。
+
+#### Python スクリプトの概要
+
+1. 毎日 7 時に実行される
+1. 依存ライブラリは以下の Pipfile 通り
+1. 毎日 6 時に届くメールから Gmail API を使ってリンクを抽出する
+1. リンクに Chrome Driver で飛んでアンケートに回答する ← **ここが若干厳しそう**
+
+```:title=Pipfile
+[[source]]
+name = "pypi"
+url = "https://pypi.org/simple"
+verify_ssl = true
+
+[dev-packages]
+
+[packages]
+google-api-python-client = "*"
+oauth2client = "*"
+google-auth-httplib2 = "*"
+google-auth-oauthlib = "*"
+selenium = "*"
+
+[requires]
+python_version = "3.9"
+```
