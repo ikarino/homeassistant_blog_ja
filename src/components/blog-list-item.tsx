@@ -22,7 +22,7 @@ type BlogListItemProps = {
 }
 
 const BlogListItem = ({ post, showTags = true }: BlogListItemProps) => (
-  <Box mb={4}>
+  <Box mb={4} style={{borderTop: "solid 1px"}}>
     <TLink as={Link} to={post.slug} sx={{ fontSize: [1, 2, 3], color: `text` }}>
       {post.title}
     </TLink>
@@ -34,7 +34,7 @@ const BlogListItem = ({ post, showTags = true }: BlogListItemProps) => (
           <ItemTags tags={post.tags} />
         </React.Fragment>
       )}<br />
-      <span sx={{fontSize: [0.8, 0.8, 0.8]}}>
+      <span sx={{fontSize: [0, 0, 0]}}>
         {post.description}
       </span>
     </p>
