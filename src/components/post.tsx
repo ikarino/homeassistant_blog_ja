@@ -67,6 +67,7 @@ const Post = ({ data: { post } }: PostProps) => (
         ".gatsby-resp-image-wrapper": {
           my: [4, 4, 5],
           boxShadow: shadow.join(`, `),
+          width: "90%"
         },
         variant: `layout.content`,
       }}
