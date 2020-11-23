@@ -1,0 +1,37 @@
+---
+title: Home Assistantで変数を使う
+date: 2020-11-24
+description: "Home Assistantのカスタムコンポーネントvarの使い方を紹介します"
+tags:
+  - Home Assistant
+---
+
+import MyYoutube from "../../MyYoutube";
+import RakutenAffiliate from "../../RakutenAffiliate";
+
+
+### やりたいこと
+まだ引っ越してきたばかりで、ゴミの日が覚えられていません。  
+バッジとしてHome Assistantに表示しようと思い、`template sensor`に登録していたのですが、
+センサーでは無いですし、何だか使い勝手がよくないので、カスタムコンポーネントを探してみました。
+
+少し探したところ、2つ見つけました。
+
+- [rogro82/hass-variables](https://github.com/rogro82/hass-variable)
+- [snarky-snark/home-assistant-variables](https://github.com/snarky-snark/home-assistant-variables/)
+
+更新が新しい2件目のほうを使ってみます。
+
+### インストール
+#### HACSのインストール
+HACSはサードパーティ製コンポーネントのインストールマネージャです。  
+[こちら](/hacsのインストール方法と使い方)を参考にインストールしてみてください。
+
+#### variablesのインストール
+HACSのIntegrationsから探します。
+
+![search](search.png)
+
+インストールしてHome Assistantを再起動します。
+
+### 使ってみる
