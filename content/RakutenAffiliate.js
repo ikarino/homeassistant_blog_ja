@@ -32,7 +32,7 @@ const styleDescription = {
 //          style="float:left;max-height:27px;width:auto;margin-top:5px"
 function RakutenAffiliate({ url, imgurl, title, value, value_date }) {
   return (
-    <>
+    <center>
       <a href={url} style={styleAnchor}>
         <img src={imgurl} alt={title} style={styleImg} />
         <div style={styleDescription}>
@@ -53,7 +53,7 @@ function RakutenAffiliate({ url, imgurl, title, value, value_date }) {
         <a href="/楽天経済圏について">楽天経済圏に関する記事</a>
         を参考にしてください。
       </div>
-    </>
+    </center>
   );
 }
 
