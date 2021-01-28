@@ -1,0 +1,82 @@
+---
+title: Home Assistant Integrationの再読み込み
+date: 2021-01-28
+description: "Integration再読み込みの自動化について紹介します"
+tags:
+  - Home Assistant
+  - Meross
+---
+
+import MyYoutube from "../../MyYoutube";
+import RakutenAffiliate from "../../RakutenAffiliate";
+import Microlink from "@microlink/react";
+
+### 背景
+
+こちらで購入した Meross 電源タップですが、Home Assistant とのインテグレーションが途切れてしまう問題が発生していました。  
+それも高頻度で発生し、一日に一回は途切れてしまい、インテグレーションの再読み込みが必要になっていました。
+
+<Microlink url="https://smartlife99.netlify.app/meross-スマート電源タップ-mss-425-fを購入しました" />
+
+### 解決策
+
+同じ問題で悩んでいた方は多数いたようで、こちらの QA で解決しました。
+
+<Microlink url="https://community.home-assistant.io/t/add-service-integration-reload/231940/24" />
+
+### Integration ID の取得
+
+実はこれが一番頭を悩ませました。
+
+home assistant のディレクトリを探しまくった結果、ついに見つけました。  
+`/usr/share/hassio/homeassistant/.storage/core.config_entries`です。
+
+このファイル内に`meross_cloud`に対応する`entry_id`が記載されていますので、メモっておきます。
+
+### Home Assistant API Token の取得
+
+Home Assistant は RESTful API を提供しています。
+
+<Microlink url="https://developers.home-assistant.io/docs/api/rest/" />
+
+ユーザプロファイル（左ペイン一番下）から、長期間有効なアクセストークンを生成します。  
+一度しか表示されないのでメモっておきます。
+
+### configuration.yaml の編集
+
+まずは先程の Token を`secrets.yaml`に保存しておきます。
+
+```yaml:title=secrets.yaml
+home_assistant_api_token: Bearer YOUR_API_TOKEN_HERE
+```
+
+次に、API を使った REST コマンドを定義しておきます。  
+ここで Integration ID を使います。
+
+```yaml:title=configuration.yaml
+rest_command:
+  reload_meross:
+    url: "http://localhost:8123/api/config/config_entries/entry/YOUR_INTEGRATION_ID/reload"
+    method: POST
+    headers:
+      authorization: !secret home_assistant_api_token
+      content-type: "application/json"
+```
+
+最後に、オートメーションの設定を書き込みます。  
+`state`が`unavailable`になってから 5 分経過したら、上記の REST コマンドが発火するようになっています。
+
+```yaml:automatinos.yaml
+- alias: reload meross when unavailable
+  description: ""
+  trigger:
+    - platform: state
+      entity_id: switch.smart_surge_protector_mss425f_switch_4
+      to: unavailable
+      for: 00:05:00
+  condition: []
+  action:
+    - service: rest_command.reload_meross
+      data: {}
+  mode: single
+```
