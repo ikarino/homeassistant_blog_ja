@@ -1,0 +1,73 @@
+---
+title: Home Assistant で定期実行のautomation
+date: 2021-01-30
+description: "定期実行の自動化について紹介します"
+tags:
+  - Home Assistant
+  - Meross
+---
+
+import MyYoutube from "../../MyYoutube";
+import RakutenAffiliate from "../../RakutenAffiliate";
+import Microlink from "@microlink/react";
+
+### 背景
+
+以下で購入したスマート電源タップには、エアポンプと植物育成用のライトを接続しています。  
+これらを Home Assistant で定期的に稼働させる`automation`を定義しました。
+
+<Microlink url="https://smartlife99.netlify.app/meross-スマート電源タップ-mss-425-fを購入しました" />
+
+### 植物育成用のライト
+
+ライトは常時つけていてもいいのですが、深夜ついていると気になるので、毎日 6 時に点灯、24 時に消灯するように設定しました。
+
+```yaml:title=automatinos.yaml
+- alias: turn on plant light at 06:00
+  description: "6時に植物ライトオン"
+  trigger:
+    - platform: time
+      at: "06:00:00"
+  action:
+    - entity_id: switch.smart_surge_protector_mss425f_usb
+      service: switch.turn_on
+      data: {}
+
+- alias: turn off plant light at 24:00
+  description: "24時に植物ライトオフ"
+  trigger:
+    - platform: time
+      at: "00:00:00"
+  action:
+    - entity_id: switch.smart_surge_protector_mss425f_usb
+      service: switch.turn_off
+      data: {}
+```
+
+### エアポンプ
+
+エアポンプは 1 時間に 1 回 5 分間、8 時から 23 時の間だけ稼働するように設定しました。
+
+時間間隔については、以下を参考に設定しました。
+
+<Microlink url="https://www.home-assistant.io/docs/automation/trigger/#time-pattern-trigger" />
+
+```yaml:title=automations.yaml
+- alias: turn on oxygen pump every hour
+  description: "水中ポンプ定期実行"
+  trigger:
+    - platform: time_pattern
+      hours: "/1"
+  condition:
+    - condition: time
+      after: "06:00:00"
+      before: "23:00:00"
+  action:
+    - data: {}
+      entity_id: switch.smart_surge_protector_mss425f_switch_4
+      service: switch.turn_on
+    - delay: "00:05:00"
+    - data: {}
+      entity_id: switch.smart_surge_protector_mss425f_switch_4
+      service: switch.turn_off
+```
